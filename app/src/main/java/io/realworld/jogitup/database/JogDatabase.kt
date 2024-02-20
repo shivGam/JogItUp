@@ -1,7 +1,6 @@
 package io.realworld.jogitup.database
 
 import androidx.room.Database
-import androidx.room.Entity
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 
