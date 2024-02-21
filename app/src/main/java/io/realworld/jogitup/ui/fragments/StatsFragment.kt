@@ -9,6 +9,6 @@ import io.realworld.jogitup.ui.viewmodels.MainViewModel
 import io.realworld.jogitup.ui.viewmodels.StatsViewModel
 
 @AndroidEntryPoint
-class StatsFragment : Fragment(R.layout.fragment_settings){
+class StatsFragment : Fragment(R.layout.fragment_statistics){
     private val viewModel : StatsViewModel by viewModels()
 }
