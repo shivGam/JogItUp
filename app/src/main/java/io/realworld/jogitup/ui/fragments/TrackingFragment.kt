@@ -17,6 +17,7 @@ import io.realworld.jogitup.extra.Constants.ACTION_START_OR_RESUME_SERVICE
 import io.realworld.jogitup.extra.Constants.LINE_COLOUR
 import io.realworld.jogitup.extra.Constants.LINE_WIDTH
 import io.realworld.jogitup.extra.Constants.MAP_ZOOM
+import io.realworld.jogitup.extra.Utility
 import io.realworld.jogitup.services.Polyline
 import io.realworld.jogitup.services.TrackingService
 import io.realworld.jogitup.ui.viewmodels.MainViewModel
@@ -27,7 +28,7 @@ import kotlinx.android.synthetic.main.fragment_tracking.*
 class TrackingFragment : Fragment(R.layout.fragment_tracking){
     private val viewModel : MainViewModel by viewModels()
     private var map : GoogleMap? = null
-
+    private var curTimeMillis = 0L
     private var isTracking = false
     private var pathPoints = mutableListOf<Polyline>()
 
@@ -54,14 +55,19 @@ class TrackingFragment : Fragment(R.layout.fragment_tracking){
             addLatestPolyline()
             moveToCenter()
         })
+        TrackingService.timeRunInMillis.observe(viewLifecycleOwner, Observer {
+            curTimeMillis = it
+            val formatTime = Utility.formatTime(curTimeMillis,true)
+            tvTimer.text = formatTime
+        })
     }
 
     private fun toggleRun() = sendCommand(if (isTracking) ACTION_PAUSE_SERVICE else ACTION_START_OR_RESUME_SERVICE)
 
     private fun updateTracking(isTracking : Boolean){
         this.isTracking = isTracking
-        if(isTracking){
-            btnToggleRun.text = "RESUME"
+        if(!isTracking){
+            btnToggleRun.text = "Start"
             btnFinishRun.visibility = View.VISIBLE
         }else{
             btnToggleRun.text = "STOP"
