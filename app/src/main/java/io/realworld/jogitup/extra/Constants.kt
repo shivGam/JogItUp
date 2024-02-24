@@ -1,5 +1,7 @@
 package io.realworld.jogitup.extra
 
+import android.graphics.Color
+
 object Constants {
     const val JOG_DB_NAME = "jog_db"
     const val REQUEST_PERMISSION_CODE = 0
@@ -8,6 +10,13 @@ object Constants {
     const val ACTION_PAUSE_SERVICE = "ACTION_PAUSE_SERVICE"
     const val ACTION_STOP_SERVICE = "ACTION_STOP_SERVICE"
     const val ACTION_SHOW_TRACKING_FRAGMENT = "ACTION_SHOW_TRACKING_FRAGMENT"
+
+    const val LOCATION_UPDATE_INTERVAL = 5000L
+    const val FASTEST_LOCATION_INTERVAL = 2000L
+
+    const val LINE_COLOUR = Color.RED
+    const val LINE_WIDTH = 15f
+    const val MAP_ZOOM = 18f
 
     const val NOTIFICATION_CHANNEL_ID = "tracking_channel"
     const val NOTIFICATION_CHANNEL_NAME = "Tracking"
