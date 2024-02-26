@@ -3,17 +3,21 @@ package io.realworld.jogitup.ui.fragments
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
-import android.view.View
+import android.view.*
+import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.PolylineOptions
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import io.realworld.jogitup.R
 import io.realworld.jogitup.extra.Constants.ACTION_PAUSE_SERVICE
 import io.realworld.jogitup.extra.Constants.ACTION_START_OR_RESUME_SERVICE
+import io.realworld.jogitup.extra.Constants.ACTION_STOP_SERVICE
 import io.realworld.jogitup.extra.Constants.LINE_COLOUR
 import io.realworld.jogitup.extra.Constants.LINE_WIDTH
 import io.realworld.jogitup.extra.Constants.MAP_ZOOM
@@ -25,15 +29,18 @@ import io.realworld.jogitup.ui.viewmodels.StatsViewModel
 import kotlinx.android.synthetic.main.fragment_tracking.*
 
 @AndroidEntryPoint
-class TrackingFragment : Fragment(R.layout.fragment_tracking){
+class TrackingFragment : Fragment(R.layout.fragment_tracking),MenuProvider{
     private val viewModel : MainViewModel by viewModels()
     private var map : GoogleMap? = null
     private var curTimeMillis = 0L
     private var isTracking = false
     private var pathPoints = mutableListOf<Polyline>()
+    private var menu : Menu? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        activity?.addMenuProvider(this,viewLifecycleOwner)
 
         btnToggleRun.setOnClickListener {
             toggleRun()
@@ -62,7 +69,19 @@ class TrackingFragment : Fragment(R.layout.fragment_tracking){
         })
     }
 
-    private fun toggleRun() = sendCommand(if (isTracking) ACTION_PAUSE_SERVICE else ACTION_START_OR_RESUME_SERVICE)
+    private fun toggleRun() {
+        if(isTracking){
+            menu?.getItem(0)?.isVisible = true
+            sendCommand(ACTION_PAUSE_SERVICE)
+        }else{
+            sendCommand(ACTION_START_OR_RESUME_SERVICE)
+        }
+    }
+
+    private fun stopRun() {
+        sendCommand(ACTION_STOP_SERVICE)
+        findNavController().navigate(R.id.action_trackingFragment_to_runFragment)
+    }
 
     private fun updateTracking(isTracking : Boolean){
         this.isTracking = isTracking
@@ -71,8 +90,46 @@ class TrackingFragment : Fragment(R.layout.fragment_tracking){
             btnFinishRun.visibility = View.VISIBLE
         }else{
             btnToggleRun.text = "STOP"
+            menu?.getItem(0)?.isVisible = true
             btnFinishRun.visibility = View.GONE
         }
+    }
+
+    override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+        menuInflater.inflate(R.menu.toolbar_menu,menu)
+        this.menu = menu
+    }
+
+    override fun onPrepareMenu(menu: Menu) {
+        super.onPrepareMenu(menu)
+        if(curTimeMillis>0L){
+            this.menu?.getItem(0)?.isVisible = true
+        }
+    }
+
+    override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+        when(menuItem.itemId){
+            R.id.cancel_button -> {
+                cancelRunDialog()
+                return true
+            }
+        }
+        return false
+    }
+
+    private fun cancelRunDialog(){
+        val dialog = MaterialAlertDialogBuilder(requireContext(), androidx.appcompat.R.style.AlertDialog_AppCompat)
+            .setTitle("Cancel the Jog")
+            .setMessage("Are you Sure to Terminate run?")
+            .setIcon(R.drawable.ic_cancel)
+            .setPositiveButton("Yes"){ _,_ ->
+                stopRun()
+            }
+            .setNegativeButton("No"){ dialogInterface,_ ->
+                dialogInterface.cancel()
+            }
+            .create()
+        dialog.show()
     }
 
     private fun moveToCenter(){

@@ -51,6 +51,7 @@ typealias Polylines = MutableList<Polyline>
 class TrackingService : LifecycleService() {
 
     private var isFirstRun = true
+    private var serviceKilled = false
 
     @Inject
     lateinit var fusedLocationProviderClient: FusedLocationProviderClient
@@ -83,6 +84,15 @@ class TrackingService : LifecycleService() {
             updateNotiTrackingState(it)
         })
     }
+
+    private fun killService(){
+        serviceKilled = true
+        isFirstRun = true
+        pauseService()
+        postInitially()
+        stopForeground(true)
+        stopSelf()
+    }
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         intent?.let {
             when(it.action){
@@ -99,6 +109,7 @@ class TrackingService : LifecycleService() {
                     pauseService()
                 }
                 ACTION_STOP_SERVICE -> {
+                    killService()
                     Timber.d("Stopped")
                 }
             }
@@ -156,9 +167,12 @@ class TrackingService : LifecycleService() {
             isAccessible = true
             set(currNotiBuilder,ArrayList<NotificationCompat.Action>())
         }
-        currNotiBuilder = baseNotiBuilder
-            .addAction(R.drawable.ic_run,actionText,pendingIntent)
-        notificationManager.notify(NOTIFICATION_ID,currNotiBuilder.build())
+        if(!serviceKilled){
+            currNotiBuilder = baseNotiBuilder
+                .addAction(R.drawable.ic_run,actionText,pendingIntent)
+            notificationManager.notify(NOTIFICATION_ID,currNotiBuilder.build())
+        }
+
     }
 
 
@@ -222,9 +236,11 @@ class TrackingService : LifecycleService() {
 
         startForeground(NOTIFICATION_ID,baseNotiBuilder.build())
         timeRunInSec.observe(this, Observer {
-            val notification = currNotiBuilder
-                .setContentText(Utility.formatTime(it * 1000L))
-            notificationManager.notify(NOTIFICATION_ID,notification.build())
+            if(!serviceKilled){
+                val notification = currNotiBuilder
+                    .setContentText(Utility.formatTime(it * 1000L))
+                notificationManager.notify(NOTIFICATION_ID,notification.build())
+            }
         })
     }
 
