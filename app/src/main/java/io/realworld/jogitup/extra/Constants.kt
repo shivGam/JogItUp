@@ -11,8 +11,12 @@ object Constants {
     const val ACTION_STOP_SERVICE = "ACTION_STOP_SERVICE"
     const val ACTION_SHOW_TRACKING_FRAGMENT = "ACTION_SHOW_TRACKING_FRAGMENT"
 
-    const val UPDATE_INTERVAL = 50L
+    const val SHARED_PREF_NAME = "sharedPref"
+    const val KEY_NAME = "KEY_NAME"
+    const val KEY_WEIGHT = "KEY_WEIGHT"
+    const val KEY_FIRST = "KEY_FIRST"
 
+    const val UPDATE_INTERVAL = 50L
     const val LOCATION_UPDATE_INTERVAL = 5000L
     const val FASTEST_LOCATION_INTERVAL = 2000L
 

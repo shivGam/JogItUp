@@ -31,6 +31,7 @@ import io.realworld.jogitup.ui.viewmodels.MainViewModel
 import io.realworld.jogitup.ui.viewmodels.StatsViewModel
 import kotlinx.android.synthetic.main.fragment_tracking.*
 import java.util.Calendar
+import javax.inject.Inject
 import kotlin.math.round
 
 @AndroidEntryPoint
@@ -41,6 +42,9 @@ class TrackingFragment : Fragment(R.layout.fragment_tracking),MenuProvider{
     private var isTracking = false
     private var pathPoints = mutableListOf<Polyline>()
     private var menu : Menu? = null
+
+    @set:Inject
+    var weight = 80f
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -177,7 +181,7 @@ class TrackingFragment : Fragment(R.layout.fragment_tracking),MenuProvider{
             }
             val avgSpeed = round((distanceInMeter/1000f)/(curTimeMillis/100f/60/60) * 10)/10f
             val dataTime = Calendar.getInstance().timeInMillis
-            val caloriesBurned = ((distanceInMeter/1000f)*80f).toInt()
+            val caloriesBurned = ((distanceInMeter/1000f)*weight).toInt()
             val run = RunStats(bmp,dataTime,avgSpeed,distanceInMeter,curTimeMillis,caloriesBurned)
             viewModel.insert(run)
             Snackbar.make(
