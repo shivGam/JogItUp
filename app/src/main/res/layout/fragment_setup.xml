@@ -34,14 +34,13 @@
             android:layout_height="wrap_content"
             android:ems="12"
             android:hint="Your Name"
-            android:inputType="textPersonName"
-            tools:text="Firstname Surname" />
+            android:inputType="textPersonName"/>
 
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/tilWeight"
-        android:layout_width="100dp"
+        android:layout_width="175dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         app:layout_constraintStart_toStartOf="@+id/tilName"
@@ -49,12 +48,11 @@
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etWeight"
-            android:layout_width="120dp"
+            android:layout_width="175dp"
             android:layout_height="wrap_content"
             android:ems="10"
             android:hint="Your Weight"
-            android:inputType="numberDecimal"
-            tools:text="80" />
+            android:inputType="numberDecimal"/>
 
     </com.google.android.material.textfield.TextInputLayout>
 
