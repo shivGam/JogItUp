@@ -21,6 +21,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:text="DATE"
+        android:textColor="@color/colorAccent"
+        android:textStyle="bold"
         app:layout_constraintEnd_toStartOf="@+id/tvTime"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
